@@ -26,7 +26,7 @@ struct hlist_node {
 
 #define WRITE_ONCE(x, val) \
 do { \
-        x = val; \
+	x = val; \
 } while (0)
 
 #define LIST_POISON1 NULL;
