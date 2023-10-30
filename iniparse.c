@@ -115,7 +115,7 @@ int ini_tree_load(const char *path, struct ini_tree *ini, int *errlineno)
 	if (line == NULL)
 	{
 		fclose(file);
-		return errno;
+		return -errno;
 	}
 
 	if (errlineno)
