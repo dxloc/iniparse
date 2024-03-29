@@ -6,7 +6,7 @@ enable_testing()
 
 add_library(${PROJECT_NAME} iniparse.c)
 
-add_executable(${PROJECT_NAME}-test main.c)
+add_executable(${PROJECT_NAME}-test test.c)
 target_link_libraries(${PROJECT_NAME}-test ${PROJECT_NAME})
 
 add_test(NAME test-${PROJECT_NAME} COMMAND ${PROJECT_NAME}-test ../test.ini)
