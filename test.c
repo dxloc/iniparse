@@ -13,23 +13,19 @@ void print_ini_tree(struct ini_tree *ini)
 	struct section_tree *s;
 	struct key_value_pair *p;
 
-	printf("{\n");
-
+	printf("{");
 	list_for_each_entry(s, &ini->head, node) {
-		printf("  {\n    \"%s\":\n", s->name);
+		printf("\"%s\":{", s->name);
 		list_for_each_entry(p, &s->head, node) {
-			printf("      \"%s\": \"%s\"", p->key, p->value);
+			printf("\"%s\":\"%s\"", p->key, p->value);
 			if (!list_entry_is_head(list_next_entry(p, node), &s->head, node))
 				printf(",");
-			printf("\n");
 		}
-		printf("  }");
+		printf("}");
 		if (!list_entry_is_head(list_next_entry(s, node), &ini->head, node))
 				printf(",");
-		printf("\n");
 	}
-
-	printf("}\n");
+	printf("}");
 }
 
 int main(int argc, char *argv[])
