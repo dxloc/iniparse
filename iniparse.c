@@ -24,8 +24,7 @@ static struct section_tree *__get_section(const struct ini_tree *ini, const char
 {
 	struct section_tree *s;
 
-	list_for_each_entry(s, &ini->head, node)
-	{
+	list_for_each_entry(s, &ini->head, node) {
 		if (s->namelen != len)
 			continue;
 		if (!memcmp(s->name, name, len))
@@ -38,8 +37,7 @@ struct key_value_pair *__get_key(const struct section_tree *section, const char 
 {
 	struct key_value_pair *pair;
 
-	list_for_each_entry(pair, &section->head, node)
-	{
+	list_for_each_entry(pair, &section->head, node) {
 		if (pair->keylen != keylen)
 			continue;
 		if (!memcmp(pair->key, key, keylen))
@@ -70,12 +68,10 @@ void ini_tree_destroy(struct ini_tree *ini)
 	struct section_tree *s;
 	struct section_tree *tmp_s;
 
-	list_for_each_entry_safe(s, tmp_s, &ini->head, node)
-	{
+	list_for_each_entry_safe(s, tmp_s, &ini->head, node) {
 		struct key_value_pair *pair;
 		struct key_value_pair *tmp_p;
-		list_for_each_entry_safe(pair, tmp_p, &s->head, node)
-		{
+		list_for_each_entry_safe(pair, tmp_p, &s->head, node) {
 			list_del(&pair->node);
 			free(pair->key);
 			free(pair->value);
@@ -112,8 +108,7 @@ int ini_tree_load(const char *path, struct ini_tree *ini, int *errlineno)
 		return -ENOENT;
 
 	line = malloc(MAX_LINE_BUFFER);
-	if (line == NULL)
-	{
+	if (line == NULL) {
 		fclose(file);
 		return -errno;
 	}
@@ -121,14 +116,12 @@ int ini_tree_load(const char *path, struct ini_tree *ini, int *errlineno)
 	if (errlineno)
 		*errlineno = 1;
 
-	for (int i = 0; (ret = fread(&c, 1, 1, file)) == 1; i++)
-	{
+	for (int i = 0; (ret = fread(&c, 1, 1, file)) == 1; i++) {
 		// Skip non-printable characters (except new line character)
 		if ((c < ' ' || c > '~') && (c != '\n'))
 			continue;
 
-		if (j >= (sizeofline - 1))
-		{
+		if (j >= (sizeofline - 1)) {
 			char *tmp;
 			sizeofline += MAX_LINE_BUFFER;
 			tmp = realloc(line, sizeofline);
@@ -138,12 +131,10 @@ int ini_tree_load(const char *path, struct ini_tree *ini, int *errlineno)
 		}
 
 		// Space character only being parse in quotes
-		if (!(flags & (FLAG_S_QUOTE | FLAG_D_QUOTE)))
-		{
+		if (!(flags & (FLAG_S_QUOTE | FLAG_D_QUOTE))) {
 			if (c == ' ')
 				continue;
-			if (c == '\'')
-			{
+			if (c == '\'') {
 				if (j != 0)
 				{
 					ret = -EINVAL;
@@ -152,8 +143,7 @@ int ini_tree_load(const char *path, struct ini_tree *ini, int *errlineno)
 				flags |= FLAG_S_QUOTE;
 				continue;
 			}
-			if (c == '"')
-			{
+			if (c == '"') {
 				if (j != 0)
 				{
 					ret = -EINVAL;
@@ -163,15 +153,12 @@ int ini_tree_load(const char *path, struct ini_tree *ini, int *errlineno)
 				continue;
 			}
 		}
-		else
-		{
-			if ((flags & FLAG_S_QUOTE) && c == '\'')
-			{
+		else {
+			if ((flags & FLAG_S_QUOTE) && c == '\'') {
 				flags &= ~FLAG_S_QUOTE;
 				continue;
 			}
-			if ((flags & FLAG_D_QUOTE) && c == '"')
-			{
+			if ((flags & FLAG_D_QUOTE) && c == '"') {
 				flags &= ~FLAG_D_QUOTE;
 				continue;
 			}
@@ -179,10 +166,8 @@ int ini_tree_load(const char *path, struct ini_tree *ini, int *errlineno)
 		}
 
 		// End of line character
-		if (c == ';' || c == '#' || c == '\n')
-		{
-			if (c != '\n')
-			{
+		if (c == ';' || c == '#' || c == '\n') {
+			if (c != '\n') {
 				if (flags & FLAG_SECTION)
 				{
 					ret = -EINVAL;
@@ -195,8 +180,7 @@ int ini_tree_load(const char *path, struct ini_tree *ini, int *errlineno)
 			if (tmp_s == NULL)
 				goto parse_next_line;
 
-			if (tmp_kv == NULL)
-			{
+			if (tmp_kv == NULL) {
 				if (flags & FLAG_SEC_END)
 					goto parse_next_line;
 
@@ -204,8 +188,7 @@ int ini_tree_load(const char *path, struct ini_tree *ini, int *errlineno)
 				goto error;
 			}
 
-			if (!(ini->flags & INI_ALLOW_EMPTY_VALUE) && len == 0)
-			{
+			if (!(ini->flags & INI_ALLOW_EMPTY_VALUE) && len == 0) {
 				ret = -EINVAL;
 				goto error;
 			}
@@ -239,8 +222,7 @@ int ini_tree_load(const char *path, struct ini_tree *ini, int *errlineno)
 			continue;
 
 		// Parse section
-		if (c == '[' && j == 0 && !(flags & FLAG_SECTION))
-		{
+		if (c == '[' && j == 0 && !(flags & FLAG_SECTION)) {
 			if (tmp_s)
 			{
 				if (section_added)
@@ -253,18 +235,15 @@ int ini_tree_load(const char *path, struct ini_tree *ini, int *errlineno)
 			continue;
 		}
 
-		if (c == ']' && (flags & FLAG_SECTION) && tmp_s == NULL)
-		{
-			if (j == 0)
-			{
+		if (c == ']' && (flags & FLAG_SECTION) && tmp_s == NULL) {
+			if (j == 0) {
 				ret = -EINVAL;
 				goto error;
 			}
 
 			len = j;
 			tmp_s = __get_section(ini, line, len);
-			if (tmp_s)
-			{
+			if (tmp_s) {
 				if (!(ini->flags & INI_ALLOW_SECTION_MERGE))
 				{
 					tmp_s = NULL;
@@ -303,18 +282,15 @@ int ini_tree_load(const char *path, struct ini_tree *ini, int *errlineno)
 			continue;
 
 		// Parse key and value
-		if (c == '=')
-		{
-			if (j == 0)
-			{
+		if (c == '=') {
+			if (j == 0) {
 				ret = -EINVAL;
 				goto error;
 			}
 
 			len = j;
 			tmp_kv = __get_key(tmp_s, line, len);
-			if (tmp_kv)
-			{
+			if (tmp_kv) {
 				key_added = 1;
 				if (!(ini->flags & INI_ALLOW_OVERWRITE_VALUE))
 				{
@@ -352,8 +328,7 @@ int ini_tree_load(const char *path, struct ini_tree *ini, int *errlineno)
 		j++;
 	}
 
-	if (tmp_s == NULL)
-	{
+	if (tmp_s == NULL) {
 		free(line);
 		fclose(file);
 		return 0;
@@ -385,16 +360,14 @@ error:
 	fclose(file);
 	if (line)
 		free(line);
-	if (tmp_kv)
-	{
+	if (tmp_kv) {
 		if (tmp_kv->key)
 			free(tmp_kv->key);
 		if (tmp_kv->value)
 			free(tmp_kv->value);
 		free(tmp_kv);
 	}
-	if (tmp_s)
-	{
+	if (tmp_s) {
 		struct key_value_pair *pair;
 		list_for_each_entry_safe(pair, tmp_kv, &tmp_s->head, node)
 		{
