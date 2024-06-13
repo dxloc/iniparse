@@ -13,14 +13,7 @@ add_executable(${PROJECT_NAME}-test test.c)
 
 target_link_libraries(${PROJECT_NAME}-test ${PROJECT_NAME})
 
-add_test(NAME test-${PROJECT_NAME} COMMAND ${PROJECT_NAME}-test ${CMAKE_BINARY_DIR}/Testing/test.ini)
-
-add_custom_command(
-  TARGET ${PROJECT_NAME}-test POST_BUILD
-  COMMAND ${CMAKE_COMMAND} -E copy
-          ${CMAKE_SOURCE_DIR}/tests/test.ini
-          ${CMAKE_BINARY_DIR}/Testing/test.ini
-)
+add_test(NAME test-${PROJECT_NAME} COMMAND ${PROJECT_NAME}-test ${CMAKE_SOURCE_DIR}/tests/test.ini)
 
 set(CMAKE_INSTALL_PREFIX ${CMAKE_BINARY_DIR}/../release)
 
