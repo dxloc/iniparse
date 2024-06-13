@@ -1,0 +1,16 @@
+# version: "3"
+services:
+  gitlab-runner:
+    image: gitlab/gitlab-runner:alpine
+    restart: always
+    volumes:
+      # - build-volume:/shared
+      - ${PWD}/gitlab-runner-config/config.toml:/etc/gitlab-runner/config.toml
+      - /var/run/docker.sock:/var/run/docker.sock
+
+# volumes:
+#   build-volume:
+#     driver_opts:
+#       type: "nfs"
+#       o: "addr=172.17.0.1,nolock,soft,nfsvers=4"
+#       device: ":/nfsroot/gitlab-runner/"
