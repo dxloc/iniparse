@@ -168,8 +168,7 @@ int ini_tree_load(const char *path, struct ini_tree *ini, int *errlineno)
 		// End of line character
 		if (c == ';' || c == '#' || c == '\n') {
 			if (c != '\n') {
-				if (flags & FLAG_SECTION)
-				{
+				if (flags & FLAG_SECTION) {
 					ret = -EINVAL;
 					goto error;
 				}
@@ -223,8 +222,7 @@ int ini_tree_load(const char *path, struct ini_tree *ini, int *errlineno)
 
 		// Parse section
 		if (c == '[' && j == 0 && !(flags & FLAG_SECTION)) {
-			if (tmp_s)
-			{
+			if (tmp_s) {
 				if (section_added)
 					section_added = 0;
 				else
@@ -292,15 +290,13 @@ int ini_tree_load(const char *path, struct ini_tree *ini, int *errlineno)
 			tmp_kv = __get_key(tmp_s, line, len);
 			if (tmp_kv) {
 				key_added = 1;
-				if (!(ini->flags & INI_ALLOW_OVERWRITE_VALUE))
-				{
+				if (!(ini->flags & INI_ALLOW_OVERWRITE_VALUE)) {
 					tmp_kv = NULL;
 					ret = -EEXIST;
 					goto error;
 				}
 
-				if (tmp_kv->value)
-				{
+				if (tmp_kv->value) {
 					free(tmp_kv->value);
 					tmp_kv->value = NULL;
 				}
@@ -369,8 +365,7 @@ error:
 	}
 	if (tmp_s) {
 		struct key_value_pair *pair;
-		list_for_each_entry_safe(pair, tmp_kv, &tmp_s->head, node)
-		{
+		list_for_each_entry_safe(pair, tmp_kv, &tmp_s->head, node) {
 			list_del(&pair->node);
 			free(pair->key);
 			free(pair->value);
