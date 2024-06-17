@@ -143,8 +143,7 @@ int ini_tree_load(const char *path, struct ini_tree *ini, int *errlineno)
 				continue;
 			}
 			if (c == '"') {
-				if (j != 0)
-				{
+				if (j != 0) {
 					ret = -EINVAL;
 					goto error;
 				}
@@ -241,8 +240,7 @@ int ini_tree_load(const char *path, struct ini_tree *ini, int *errlineno)
 			len = j;
 			tmp_s = __get_section(ini, line, len);
 			if (tmp_s) {
-				if (!(ini->flags & INI_ALLOW_SECTION_MERGE))
-				{
+				if (!(ini->flags & INI_ALLOW_SECTION_MERGE)) {
 					tmp_s = NULL;
 					ret = -ENOTUNIQ;
 					goto error;
