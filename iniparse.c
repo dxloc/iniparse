@@ -135,8 +135,7 @@ int ini_tree_load(const char *path, struct ini_tree *ini, int *errlineno)
 			if (c == ' ')
 				continue;
 			if (c == '\'') {
-				if (j != 0)
-				{
+				if (j != 0) {
 					ret = -EINVAL;
 					goto error;
 				}
